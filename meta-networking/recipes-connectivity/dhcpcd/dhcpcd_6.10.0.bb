@@ -12,11 +12,13 @@ SRC_URI = "http://roy.marples.name/downloads/${BPN}/${BPN}-${PV}.tar.xz"
 SRC_URI[md5sum] = "f39c5773e7c4bea352d9fb7367c899de"
 SRC_URI[sha256sum] = "ab56af9b2e86913c55a965cb0f835e87749df78318564acf90d5d698f413ad35"
 
-inherit autotools
+inherit autotools-brokensep
 
-B = "${S}"
-EXTRA_OECONF = "--enable-ipv4 --enable-ipv6"
+PACKAGECONFIG ?= "udev ${@bb.utils.contains("DISTRO_FEATURES", "ipv6", "ipv6", "", d)}"
+
+PACKAGECONFIG[udev] = "--with-udev,--without-udev,udev,udev"
+PACKAGECONFIG[ipv6] = "--enable-ipv6,--disable-ipv6"
+
+EXTRA_OECONF = "--enable-ipv4"
 
 FILES_${PN}-dbg += "${libdir}/dhcpcd/dev/.debug"
-
-RDEPENDS_${PN} = "udev"
